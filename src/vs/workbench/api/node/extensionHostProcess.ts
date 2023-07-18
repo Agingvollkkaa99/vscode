@@ -5,6 +5,7 @@
 
 import * as nativeWatchdog from 'native-watchdog';
 import * as net from 'net';
+import * as dns from 'dns';
 import * as minimist from 'minimist';
 import * as performance from 'vs/base/common/performance';
 import type { MessagePortMain } from 'vs/base/parts/sandbox/node/electronTypes';
@@ -34,6 +35,11 @@ interface ParsedExtHostArgs {
 	skipWorkspaceStorageLock?: boolean;
 	useHostProxy?: 'true' | 'false'; // use a string, as undefined is also a valid value
 }
+
+(function configureDNSResultOrder() {
+	// Refs https://github.com/nodejs/node/issues/40702
+	dns.setDefaultResultOrder('ipv4first');
+})();
 
 // workaround for https://github.com/microsoft/vscode/issues/85490
 // remove --inspect-port=0 after start so that it doesn't trigger LSP debugging
